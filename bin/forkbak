@@ -60,6 +60,8 @@ END_OF_MESSAGE
       begin
         resolved_database_url = self.database_url(config_var)
 
+        puts "Waiting for database with URL: #{resolved_database_url}"				
+
         url = URI.parse(resolved_database_url)
         host = url.host
         host = host.gsub(/%2F/i, '/') if host
