@@ -60,7 +60,7 @@ END_OF_MESSAGE
       begin
         resolved_database_url = self.database_url(config_var)
 
-        puts "Waiting for database with URL: #{resolved_database_url}"				
+        puts "Waiting for database with URL: #{resolved_database_url} -- #{config_var}"				
 
         url = URI.parse(resolved_database_url)
         host = url.host
