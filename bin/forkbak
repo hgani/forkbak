@@ -193,7 +193,7 @@ def run
   puts "Creating database"
   db = Forkbak.create_database
   begin
-    puts "Waiting for database to become available"
+		puts "Waiting for database to become available #{db['config_vars']} -- #{db['config_vars'].size}"
     Forkbak.wait_for_database(db['config_vars'].first)
     puts "Creating backup"
     transfer_id = Forkbak.create_backup(db)
