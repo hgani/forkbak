@@ -54,7 +54,7 @@ END_OF_MESSAGE
     heroku.config_var.info(ENV.fetch('APP'))[config_var]
   end
 
-  def self.wait_for_database(config_var)
+  def self.wait_for_database_old(config_var)
     count = 0
     loop do
       begin
@@ -108,6 +108,22 @@ END_OF_MESSAGE
       sleep(10)
     end
   end
+
+	def self.wait_for_database(db)
+    count = 0
+    loop do
+			return true if db['state'] == 'provisioned'
+
+			count += 1
+			puts "Unable to connect - bad creds? Retrying ..."
+
+			# Apparently we might get this error even though we've got the credentials correct. Retry a few times to wait until DB is up.
+			if count > 25 
+				notify_error("Bad credentials")
+				return false  # Don't retry
+			end
+		end
+	end
 
   def self.create_backup(db)
     pgbackups = Forkbak::PGBackupsClient.new(db: db)
@@ -194,7 +210,8 @@ def run
   db = Forkbak.create_database
   begin
 		puts "Waiting for database to become available #{db['config_vars']} -- #{db['config_vars'].size}"
-    Forkbak.wait_for_database(db['config_vars'].first)
+    #Forkbak.wait_for_database(db['config_vars'].first)
+    exit unless Forkbak.wait_for_database(db)
     puts "Creating backup"
     transfer_id = Forkbak.create_backup(db)
     puts "Waiting for backup to complete (#{transfer_id})"
