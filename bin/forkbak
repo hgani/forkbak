@@ -117,18 +117,18 @@ END_OF_MESSAGE
 			return true if db['state'] == 'provisioned'
 
 			count += 1
-			puts "Unable to connect - bad creds? Retrying ..."
+			puts "Not ready yet. Trying in 1 minute ..."
 
 			# Apparently we might get this error even though we've got the credentials correct. Retry a few times to wait until DB is up.
-			if count > 25 
-				notify_error("Bad credentials")
+			if count > 60 
+				notify_error("Timed out! Bad credentials?")
 				return false  # Don't retry
 			end
 
-      sleep(30)
+      sleep(60)
 			
 			id = db['id']
-			puts "Retrieving status of DB with ID: #{id}"
+			puts "Retrieving status of DB with ID: #{id} ..."
 			db = heroku.addon.info(ENV['APP'], id)
 		end
 	end
@@ -217,7 +217,7 @@ def run
   puts "Creating database"
   db = Forkbak.create_database
   begin
-		puts "Waiting for database to become available #{db['config_vars']} -- #{db['config_vars'].size}"
+		puts "Waiting for database to become available. This may take a while ..."
     #Forkbak.wait_for_database(db['config_vars'].first)
     exit unless Forkbak.wait_for_database(db)
     puts "Creating backup"
