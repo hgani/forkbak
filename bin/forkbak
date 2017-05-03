@@ -223,14 +223,16 @@ def run
     puts "Creating backup"
     transfer_id = Forkbak.create_backup(db)
     puts "Waiting for backup to complete (#{transfer_id})"
-    Forkbak.wait_for_backup(db, transfer_id)
+
+		# Commented out because this seems to be broken and will cause infinite loop
+    #Forkbak.wait_for_backup(db, transfer_id)
   rescue => e
     message = "Failed to take backup: #{e.class} - #{e.message}\n\n#{e.backtrace.join("\n")}"
     Forkbak.notify_error(message)
     puts message
   ensure
     puts "Done, took #{Time.now - start}"
-    Forkbak.destroy_databases
+    #Forkbak.destroy_databases
   end
 end
 
