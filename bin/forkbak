@@ -10,6 +10,8 @@ $stdout.sync = true
 
 module Forkbak
   def self.notify_error(text)
+		puts text
+
     recipients = ENV['RECIPIENT_EMAILS'].split(/,/)
     message = <<END_OF_MESSAGE
 From: Error <error@teamapp.com>
@@ -122,6 +124,12 @@ END_OF_MESSAGE
 				notify_error("Bad credentials")
 				return false  # Don't retry
 			end
+
+      sleep(30)
+			
+			id = db['id']
+			puts "Retrieving status of DB with ID: #{id}"
+			db = heroku.addon.info(ENV['APP'], id)
 		end
 	end
 
